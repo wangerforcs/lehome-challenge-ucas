@@ -1,152 +1,125 @@
-"""
-Example: How participants can register their own policy.
-
-This file demonstrates how a participant would create and register
-their custom policy for the LeHome Challenge.
-"""
-
+import os
+import torch
+import torch.nn as nn
 import numpy as np
 from typing import Dict, Optional
+from torchvision import models, transforms
+
+# 官方规定的基类和注册器
 from .base_policy import BasePolicy
 from .registry import PolicyRegistry
-
 
 @PolicyRegistry.register("custom")
 class CustomPolicy(BasePolicy):
     """
-    LeHome Challenge Custom Policy Example.
-    
-    This is a simple template demonstrating how to implement your own policy.
-    Participants can use this class as a starting point.
-    
-    Usage Example:
-        policy = CustomPolicy(model_path="path/to/model.pth", device="cuda")
-        observation = env._get_observations()
-        action = policy.select_action(observation)
+    LeHome Challenge 2026 - 动态路由混合专家策略 (Dynamic MoE Router)
     """
-    
-    def __init__(self, model_path: Optional[str] = None, device: str = "cuda", **kwargs):
-        """
-        Initialize the policy.
-        
-        Args:
-            model_path: Path to model weights (optional).
-                Note: Custom policies do not necessarily need to receive the model_path via command-line arguments. 
-                You are free to define how your model is loaded, for example:
-                - Command-line arguments
-                - Reading the path from environment variables
-                - Using a hard-coded path
-                - Loading from a configuration file
-                - Or not requiring an external model file at all
-            device: Device to use ('cpu' or 'cuda').
-            **kwargs: Additional arguments.
-        """
+
+    def __init__(self, model_path: Optional[str] = None, device: str = "cpu", **kwargs):
         super().__init__(**kwargs)
-        self.device = device
-        self.model_path = model_path
-        
-        # TODO: Load your model here
-        # Note: You are not restricted to using the model_path parameter; you can define any loading logic.
-        # Example 1: Load from model_path (if provided)
-        # import torch
-        # self.model = YourModel()
-        # if model_path:
-        #     checkpoint = torch.load(model_path, map_location=device)
-        #     self.model.load_state_dict(checkpoint)
-        # self.model.to(device)
-        # self.model.eval()
-        #
-        # Example 2: Load from environment variables or a config file
-        # import os
-        # model_path = os.getenv("MY_MODEL_PATH", "default/path/to/model.pth")
-        # self.model = load_model(model_path)
-        #
-        # Example 3: Hard-coded path
-        # self.model = load_model("path/to/your/model.pth")
-        
-        # Example: Maintain observation history (for temporal policies like RNN/Transformer)
-        self.observation_history = []
-        self.max_history_length = 10
-        
-        print(f"[CustomPolicy] Initialized - Device: {device}, Model Path: {model_path}")
-        
+        self.device = torch.device(device)
+
+        # 【终极修复】：无视外部传入的默认路径干扰，强制锁定当前项目的物理根目录！
+        self.base_dir = "/home/wzb/challenges/weights/act_moe"
+
+        print(f"\n🚀 [MoE Router] 系统初始化启动! (Device: {self.device})")
+        print(f"📁 [MoE Router] 锁定工作根目录: {self.base_dir}")
+
+        # 1. 挂载四大专家模型的路径 + 对应的数据集元数据路径
+        self.expert_configs = {
+            'pant_long': {
+                'policy_path': os.path.join(self.base_dir, "outputs/train/act_h200_pant_long/checkpoints/080000/pretrained_model"),
+                'dataset_root': os.path.join(self.base_dir, "Datasets/example/pant_long_merged")
+            },
+            'pant_short': {
+                'policy_path': os.path.join(self.base_dir, "outputs/train/act_h200_pant_short/checkpoints/080000/pretrained_model"),
+                'dataset_root': os.path.join(self.base_dir, "Datasets/example/pant_short_merged")
+            },
+            'top_long': {
+                'policy_path': os.path.join(self.base_dir, "outputs/train/act_h200_top_long/checkpoints/last/pretrained_model"),
+                'dataset_root': os.path.join(self.base_dir, "Datasets/example/top_long_merged")
+            },
+            'top_short': {
+                'policy_path': os.path.join(self.base_dir, "outputs/train/act_h200_top_short/checkpoints/last/pretrained_model"),
+                'dataset_root': os.path.join(self.base_dir, "Datasets/example/top_short_merged")
+            }
+        }
+
+        self.idx_to_class = {0: 'pant_long', 1: 'pant_short', 2: 'top_long', 3: 'top_short'}
+
+        # 2. 唤醒前置视觉大脑 (ResNet18 Classifier)
+        print("🧠 [MoE Router] 正在加载视觉分类器网络...")
+        self.classifier = models.resnet18(weights=None)
+        num_ftrs = self.classifier.fc.in_features
+        self.classifier.fc = nn.Linear(num_ftrs, 4)
+
+        classifier_weight_path = os.path.join(self.base_dir, "outputs/classifier/garment_classifier_resnet18.pth")
+        self.classifier.load_state_dict(torch.load(classifier_weight_path, map_location=self.device))
+        self.classifier.to(self.device)
+        self.classifier.eval()
+
+        self.vision_transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Resize((224, 224), antialias=True),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        ])
+
+        self.current_expert_name = None
+        self.current_policy = None
+        self.step_count = 0
+
+    def load_expert(self, garment_type):
+        """动态显存管理：卸载旧专家，使用 PolicyRegistry.create 实例化新专家"""
+        if self.current_expert_name == garment_type:
+            return
+
+        print(f"\n👁️ [MoE Router] 视觉确认目标: {garment_type}。正在执行热切换...")
+
+        # 卸载旧模型，释放显存
+        if self.current_policy is not None:
+            del self.current_policy
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+
+        config = self.expert_configs[garment_type]
+        if not os.path.exists(config['policy_path']):
+            raise FileNotFoundError(f"❌ 找不到专家模型: {config['policy_path']}")
+
+        # 调用官方注册好的 lerobot 包装器
+        self.current_policy = PolicyRegistry.create(
+            "lerobot",
+            policy_path=config['policy_path'],
+            dataset_root=config['dataset_root'],
+            device=self.device.type,
+            task_description=f"fold the {garment_type}"
+        )
+
+        self.current_expert_name = garment_type
+        print(f"✅ [MoE Router] 专家 [{garment_type}] 已接管机械臂控制权！\n")
+
     def reset(self):
-        """
-        Reset policy state.
-        Called before the start of each episode.
-        """
-        # Clear history buffer
-        self.observation_history.clear()
-        
-        # TODO: Reset internal model state (if applicable)
-        # Example: 
-        # if hasattr(self.model, 'reset_hidden_state'):
-        #     self.model.reset_hidden_state()
-        
+        self.step_count = 0
+        if self.current_policy is not None:
+            self.current_policy.reset()
+
     def select_action(self, observation: Dict[str, np.ndarray]) -> np.ndarray:
-        """
-        Generate action based on observation.
-        
-        Args:
-            observation: Dictionary containing environment observations:
-                - "observation.state": Robot state (joint angles, etc.), shape (N,), float32
-                - "observation.images.top": Top view image, shape (H, W, 3), uint8, [0-255]
-                - "observation.images.wrist_left": Left wrist camera, shape (H, W, 3), uint8
-                - "observation.images.wrist_right": Right wrist camera, shape (H, W, 3), uint8
-                - Other sensor data...
-                
-        Returns:
-            action: Action array, shape (action_dim,), float32
-                - Single-arm task: (6,) - [6 joint angles]
-                - Dual-arm task: (12,) - [6 left joints + 6 right joints]
-        """
-        
-        # ===== Example 1: Accessing State Data =====
-        if "observation.state" in observation:
-            state = observation["observation.state"]  # shape: (N,)
-            # TODO: Use state data
-            # Example: 
-            # state_tensor = torch.from_numpy(state).float().to(self.device)
-            # features = self.extract_state_features(state_tensor)
-            
-        # ===== Example 2: Accessing Image Data =====
-        images = {}
-        for key in observation.keys():
-            if "images" in key:
-                images[key] = observation[key]  # shape: (H, W, 3), uint8
-                # TODO: Preprocess image and pass to model
-                # Example: 
-                # import torch
-                # image = observation[key]
-                # # Convert (H, W, C) -> (C, H, W) and normalize to [0, 1]
-                # image_tensor = torch.from_numpy(image).permute(2, 0, 1) / 255.0
-                # # Add batch dimension: (1, C, H, W)
-                # image_tensor = image_tensor.unsqueeze(0).to(self.device) 
-                # visual_features = self.model.encode_image(image_tensor)
-                
-        # ===== Example 3: Handling History/Time-Series =====
-        # Append current observation to history
-        self.observation_history.append(observation.copy())
-        if len(self.observation_history) > self.max_history_length:
-            self.observation_history.pop(0)
-            
-        # TODO: Predict using history (e.g., for RNN/Transformer/LSTM)
-        # Example: 
-        # history_states = [obs["observation.state"] for obs in self.observation_history]
-        # history_tensor = torch.from_numpy(np.stack(history_states)).float().to(self.device)
-        # action_tensor = self.model.predict_from_history(history_tensor)
-        # action = action_tensor.cpu().numpy()
-        
-        # ===== Current Implementation: Random Policy (For Demonstration) =====
-        # Infer action dimension from state dimension
-        if "observation.state" in observation:
-            action_dim = observation["observation.state"].shape[0]
-        else:
-            # Default to dual-arm if state is missing
-            action_dim = 12
-            
-        # Generate random action (small magnitude to avoid violent movement)
-        # Note: Replace this with your actual model inference logic
-        action = np.random.randn(action_dim).astype(np.float32) * 0.05
-        
-        return action
+        # 1. 第 0 步：截获图像进行分类
+        if self.step_count == 0:
+            img_key = next((k for k in observation.keys() if 'top' in k and 'image' in k), None)
+            raw_img_numpy = observation[img_key]
+
+            with torch.no_grad():
+                processed_img = self.vision_transform(raw_img_numpy).unsqueeze(0).to(self.device)
+                outputs = self.classifier(processed_img)
+                _, preds = torch.max(outputs, 1)
+                predicted_idx = preds.item()
+
+            garment_type = self.idx_to_class[predicted_idx]
+            self.load_expert(garment_type)
+            self.current_policy.reset()
+
+        # 2. 直接将原生的 Numpy observation 丢给官方的包装器
+        action = self.current_policy.select_action(observation)
+
+        self.step_count += 1
+        return action(lehome)

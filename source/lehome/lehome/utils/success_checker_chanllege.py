@@ -1,4 +1,5 @@
 import math
+import os
 import numpy as np
 import torch
 from lehome.utils.logger import get_logger
@@ -51,6 +52,20 @@ def get_object_particle_position(particle_object, index_list):
         except Exception as e2:
             logger.error(f"Error in get_object_particle_position: {e2}")
             return
+    point_count = int(len(transformed_mesh_points))
+    invalid_indices = [idx for idx in index_list if idx < 0 or idx >= point_count]
+    debug_checkpoints = os.environ.get("LEHOME_DEBUG_CHECKPOINTS", "0") == "1"
+
+    if debug_checkpoints or invalid_indices:
+        logger.info(
+            f"[Checkpoint Debug] mesh_point_count={point_count}, check_points={list(index_list)}, invalid_indices={invalid_indices}"
+        )
+
+    if invalid_indices:
+        raise IndexError(
+            f"Invalid check_point indices {invalid_indices} for mesh_point_count={point_count}"
+        )
+
     positions = (transformed_mesh_points[index_list] * 100).tolist()
     return positions
 

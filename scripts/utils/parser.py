@@ -175,7 +175,10 @@ def setup_replay_parser(
         help="Name of the task environment.",
     )
     parser.add_argument(
-        "--step_hz", type=int, default=60, help="Environment stepping rate in Hz."
+        "--step_hz",
+        type=int,
+        default=0,
+        help="Environment stepping rate in Hz. Set 0 to disable rate limiting for fastest filtering.",
     )
     parser.add_argument(
         "--dataset_root",
@@ -258,6 +261,126 @@ def setup_replay_parser(
         action="store_true",
         default=False,
         help="Disable depth observation during replay.",
+    )
+
+    return parser
+
+
+def setup_filter_parser(
+    subparsers: argparse.ArgumentParser, parent_parsers: list[argparse.ArgumentParser]
+) -> argparse.ArgumentParser:
+    """Setup parser for 'filter' subcommand."""
+    parser = subparsers.add_parser(
+        "filter",
+        help="Replay datasets and keep only episodes that pass evaluation success checks",
+        parents=parent_parsers,
+        conflict_handler="resolve",
+    )
+
+    parser.add_argument(
+        "--task",
+        type=str,
+        default="LeHome-BiSO101-Direct-Garment-v2",
+        help="Name of the task environment.",
+    )
+    parser.add_argument(
+        "--step_hz",
+        type=int,
+        default=0,
+        help="Environment stepping rate in Hz. Set 0 to disable rate limiting for fastest filtering.",
+    )
+    parser.add_argument(
+        "--dataset_root",
+        type=str,
+        default=None,
+        help="Single dataset root to filter.",
+    )
+    parser.add_argument(
+        "--dataset_parent_root",
+        type=str,
+        default=None,
+        help="Parent directory containing per-class datasets like *_merged.",
+    )
+    parser.add_argument(
+        "--dataset_pattern",
+        type=str,
+        default="*_merged",
+        help="Glob pattern under dataset_parent_root used to find datasets.",
+    )
+    parser.add_argument(
+        "--output_root",
+        type=str,
+        default=None,
+        help="Root directory to save filtered datasets. If None, only reports are generated.",
+    )
+    parser.add_argument(
+        "--report_root",
+        type=str,
+        default="outputs/filter_reports",
+        help="Directory to save filtering reports.",
+    )
+    parser.add_argument(
+        "--start_episode",
+        type=int,
+        default=0,
+        help="Starting episode index (inclusive).",
+    )
+    parser.add_argument(
+        "--end_episode",
+        type=int,
+        default=None,
+        help="Ending episode index (exclusive). If None, process all episodes.",
+    )
+    parser.add_argument(
+        "--garment_names",
+        type=str,
+        default=None,
+        help="Comma-separated garment names to include, e.g. Top_Short_Seen_3,Top_Short_Seen_4",
+    )
+    parser.add_argument(
+        "--seen_indices",
+        type=str,
+        default=None,
+        help="Comma-separated seen indices to include, e.g. 3,4 selects *_Seen_3 and *_Seen_4",
+    )
+    parser.add_argument(
+        "--unseen_indices",
+        type=str,
+        default=None,
+        help="Comma-separated unseen indices to include, e.g. 0,1 selects *_Unseen_0 and *_Unseen_1",
+    )
+    parser.add_argument(
+        "--task_description",
+        type=str,
+        default="fold the garment on the table",
+        help="Description of the task to be performed.",
+    )
+    parser.add_argument(
+        "--garment_version", type=str, default="Release", help="Version of the garment."
+    )
+    parser.add_argument(
+        "--garment_cfg_base_path",
+        type=str,
+        default="Assets/objects/Challenge_Garment",
+        help="Base path of the garment configuration.",
+    )
+    parser.add_argument(
+        "--particle_cfg_path",
+        type=str,
+        default="source/lehome/lehome/tasks/bedroom/config_file/particle_garment_cfg.yaml",
+        help="Path of the particle configuration.",
+    )
+    parser.add_argument(
+        "--device",
+        type=str,
+        default="cuda",
+        help="Simulation device for replay, e.g. cpu or cuda.",
+    )
+    parser.add_argument(
+        "--disable_depth",
+        action="store_true",
+        default=False,
+        help="Disable depth observation when exporting filtered datasets.",
     )
 
     return parser

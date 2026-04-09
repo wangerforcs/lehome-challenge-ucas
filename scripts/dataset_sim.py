@@ -15,7 +15,7 @@ import argparse
 
 from isaaclab.app import AppLauncher
 
-from .utils import common, setup_record_parser, setup_replay_parser
+from .utils import common, setup_filter_parser, setup_record_parser, setup_replay_parser
 from lehome.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -37,18 +37,21 @@ def main():
     # Setup all subcommand parsers first
     setup_record_parser(subparsers, [isaac_args_parser])
     setup_replay_parser(subparsers, [isaac_args_parser])
+    setup_filter_parser(subparsers, [isaac_args_parser])
 
     args = parser.parse_args()
     simulation_app = common.launch_app_from_args(args)
 
     try:
         import lehome.tasks.bedroom
-        from .utils import dataset_record, dataset_replay
+        from .utils import dataset_filter, dataset_record, dataset_replay
 
         if args.command == "record":
             dataset_record.record_dataset(args, simulation_app)
         elif args.command == "replay":
             dataset_replay.replay(args)
+        elif args.command == "filter":
+            dataset_filter.filter_datasets(args)
     except Exception as e:
         logger.error(f"Error during dataset {args.command}: {e}", exc_info=True)
         raise

@@ -13,6 +13,7 @@ from . import parser
 from .parser import (
     setup_record_parser,
     setup_replay_parser,
+    setup_filter_parser,
     setup_inspect_parser,
     setup_read_parser,
     setup_augment_parser,
@@ -34,6 +35,7 @@ from .dataset_processing import (
 __all__ = [
     "setup_record_parser",
     "setup_replay_parser",
+    "setup_filter_parser",
     "setup_inspect_parser",
     "setup_read_parser",
     "setup_augment_parser",
