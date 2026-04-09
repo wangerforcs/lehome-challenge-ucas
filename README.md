@@ -45,6 +45,7 @@
   - [4. Eval](#4-eval)
     - [Common Options](#common-options)
     - [Garment Test Configuration](#garment-test-configuration)
+- [Date filter](#date-filter)
 - [📮 Submission](#-submission)
 - [🧩 Acknowledgments](#-acknowledgments)
 
@@ -174,6 +175,22 @@ Evaluation is performed on the `Release` set of garments. Under the directory `A
 *   **Evaluate Specific Garments**: Edit `Assets/objects/Challenge_Garment/Release/Release_test_list.txt` to include only the garments you want to test, then run with `--garment_type custom`.
 
 > 📖 **For detailed policy evaluation guide**, see [eval_guide](docs/policy_eval.md).
+
+
+## Date filter
+
+Official data contains many invalid data, so we provide a filter tool to filter the successful data.
+
+```shell
+xvfb-run -a .venv/bin/python -m scripts.dataset_sim filter \
+  --dataset_root /path/to/dataset_challenge_merged/four_types_merged \
+  --report_root outputs/filter_reports \
+  --output_root /path/to/dataset_challenge_filtered \
+  --headless \
+  --enable_cameras \
+  --step_hz 0 \
+  --device cpu
+```
 
 
 ## 📮 Submission
