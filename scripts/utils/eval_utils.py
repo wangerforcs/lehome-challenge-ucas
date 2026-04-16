@@ -124,6 +124,8 @@ def save_videos_from_observations(
     episode_idx: int,
     success: torch.Tensor,
     fps: int = 30,
+    step_overlays: Optional[Dict[str, List[int]]] = None,
+    filename_prefix: Optional[str] = None,
 ) -> None:
     """Save captured frames as MP4 videos."""
     if success.item():
@@ -137,12 +139,33 @@ def save_videos_from_observations(
         if len(frames) == 0:
             continue
         h, w, c = frames[0].shape
-        out_path = os.path.join(
-            target_dir, f"episode{episode_idx}_{key.replace('.', '_')}.mp4"
-        )
+        stem = filename_prefix if filename_prefix is not None else f"episode{episode_idx}"
+        out_path = os.path.join(target_dir, f"{stem}_{key.replace('.', '_')}.mp4")
         writer = cv2.VideoWriter(out_path, cv2.VideoWriter_fourcc(*"mp4v"), fps, (w, h))
-        for frame in frames:
+        frame_steps = step_overlays.get(key, []) if step_overlays is not None else []
+        for frame_idx, frame in enumerate(frames):
             frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+            if frame_idx < len(frame_steps):
+                cv2.putText(
+                    frame_bgr,
+                    f"step: {frame_steps[frame_idx]}",
+                    (12, 28),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.8,
+                    (255, 255, 255),
+                    2,
+                    cv2.LINE_AA,
+                )
+                cv2.putText(
+                    frame_bgr,
+                    f"step: {frame_steps[frame_idx]}",
+                    (12, 28),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.8,
+                    (0, 0, 0),
+                    1,
+                    cv2.LINE_AA,
+                )
             writer.write(frame_bgr)
         writer.release()
         logger.info(f"Saved video: {out_path}")

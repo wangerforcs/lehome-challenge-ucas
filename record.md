@@ -133,16 +133,16 @@ CUDA_VISIBLE_DEVICES=0,1 accelerate launch --multi_gpu --num_processes=2 /home/w
 
 
 
-CUDA_VISIBLE_DEVICES=0 xvfb-run -a .venv/bin/python -m scripts.eval \
+CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.eval \
     --policy_type lerobot \
-    --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/pi05_merged_fine/checkpoints/last/pretrained_model \
-    --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/pant_long_merged \
-    --garment_type "pant_long" \
+    --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/pi05_filterd/checkpoints/010000/pretrained_model \
+    --dataset_root /data/datasets/datasets-hf/dataset_challenge_filtered/top_short_merged \
+    --garment_type "top_short" \
     --num_episodes 5 \
     --enable_cameras \
     --headless \
     --save_video \
-    --video_dir outputs/eval_videos/pi05_fine_h200_pant_long \
+    --video_dir outputs/eval_videos/pi05_filtered_top_short \
     --device cpu
 
 
@@ -182,6 +182,7 @@ chunksize=10，n_action_steps=5
 |pant_short|94%|50%|86.6%|
 
 
+filter
 
 
 
@@ -278,4 +279,203 @@ CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.dataset_sim filte
 
 pant_short 244/250 这个效果在我旧版测试最好
 pant_long 164/250 这个测试就很垃圾
+top_short 214/250 这个测试也很垃圾
+top_long 206/250 测试还行
+一共828条数据
 
+第二次，数量差不多831，但是tmd筛去的不一样
+pant_short 245/250
+pant_long 158/250
+top_short 217/250
+top_long 211/250
+
+
+
+
+.venv/bin/python -m scripts.dataset merge \
+  --source_roots "[
+    '/data/datasets/datasets-hf/dataset_challenge_filtered_try/top_short_merged',
+    '/data/datasets/datasets-hf/dataset_challenge_filtered_try/top_long_merged',
+    '/data/datasets/datasets-hf/dataset_challenge_filtered_try/pant_short_merged',
+    '/data/datasets/datasets-hf/dataset_challenge_filtered_try/pant_long_merged'
+  ]" \
+  --output_root /data/datasets/datasets-hf/dataset_challenge_filtered_try/four_types_merged \
+  --output_repo_id four_types_merged \
+  --merge_custom_meta
+
+
+
+
+
+
+mkdir -p outputs/logs
+
+nohup bash -lc '
+CUDA_VISIBLE_DEVICES=0 xvfb-run -a .venv/bin/python -m scripts.dataset_sim filter \
+  --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/top_short_merged \
+  --report_root outputs/filter_reports_top_short \
+  --output_root /data/datasets/datasets-hf/dataset_challenge_filtered_try/top_short \
+  --headless \
+  --enable_cameras \
+  --step_hz 0 \
+  --device cpu
+' > outputs/logs/filter_top_short_cpu.log 2>&1 &
+
+nohup bash -lc '
+CUDA_VISIBLE_DEVICES=0 xvfb-run -a .venv/bin/python -m scripts.dataset_sim filter \
+  --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/top_long_merged \
+  --report_root outputs/filter_reports_top_long \
+  --output_root /data/datasets/datasets-hf/dataset_challenge_filtered_try/top_long \
+  --headless \
+  --enable_cameras \
+  --step_hz 0 \
+  --device cpu
+' > outputs/logs/filter_top_long_cpu.log 2>&1 &
+
+nohup bash -lc '
+CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.dataset_sim filter \
+  --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/pant_short_merged \
+  --report_root outputs/filter_reports_pant_short \
+  --output_root /data/datasets/datasets-hf/dataset_challenge_filtered_try/pant_short \
+  --headless \
+  --enable_cameras \
+  --step_hz 0 \
+  --device cpu
+' > outputs/logs/filter_pant_short_cpu.log 2>&1 &
+
+nohup bash -lc '
+CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.dataset_sim filter \
+  --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/pant_long_merged \
+  --report_root outputs/filter_reports_pant_long \
+  --output_root /data/datasets/datasets-hf/dataset_challenge_filtered_try/pant_long \
+  --headless \
+  --enable_cameras \
+  --step_hz 0 \
+  --device cpu
+' > outputs/logs/filter_pant_long_cpu.log 2>&1 &
+
+
+
+
+
+
+
+awk '
+/Replaying episode/ {
+  if (started && !success) print last_episode
+  started=1
+  success=0
+  last_episode=$10
+}
+/Final result: Success/ { success=1 }
+END {
+  if (started && !success) print last_episode
+}
+' outputs/logs/filter_pant_long_cpu.log
+
+
+
+
+
+
+CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.eval \
+    --policy_type lerobot \
+    --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/pi05_filterd/checkpoints/010000/pretrained_model \
+    --dataset_root /data/datasets/datasets-hf/dataset_challenge_filtered/top_long_merged \
+    --garment_type "top_long" \
+    --num_episodes 5 \
+    --enable_cameras \
+    --headless \
+    --save_video \
+    --video_dir outputs/eval_videos/pi05_filtered_top_long \
+    --device cpu
+
+
+CUDA_VISIBLE_DEVICES=0 xvfb-run -a .venv/bin/python -m scripts.eval \
+    --policy_type lerobot \
+    --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/pi05_filterd/checkpoints/010000/pretrained_model \
+    --dataset_root /data/datasets/datasets-hf/dataset_challenge_filtered/pant_long_merged \
+    --garment_type "pant_long" \
+    --num_episodes 5 \
+    --enable_cameras \
+    --headless \
+    --save_video \
+    --video_dir outputs/eval_videos/pi05_filtered_pant_long \
+    --device cpu
+
+
+CUDA_VISIBLE_DEVICES=0 xvfb-run -a .venv/bin/python -m scripts.eval \
+    --policy_type lerobot \
+    --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/pi05_filterd/checkpoints/010000/pretrained_model \
+    --dataset_root /data/datasets/datasets-hf/dataset_challenge_filtered/pant_short_merged \
+    --garment_type "pant_short" \
+    --num_episodes 5 \
+    --enable_cameras \
+    --headless \
+    --save_video \
+    --video_dir outputs/eval_videos/pi05_filtered_pant_short \
+    --device cpu
+
+
+
+
+CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.eval \
+    --policy_type lerobot \
+    --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/top_short_pi05_continue/checkpoints/006000/pretrained_model \
+    --dataset_root /data/datasets/datasets-hf/dataset_challenge_filtered_vote2of2_switch/top_short/top_short_merged \
+    --garment_type "top_short" \
+    --num_episodes 5 \
+    --enable_cameras \
+    --headless \
+    --save_video \
+    --video_dir outputs/eval_videos/top_short_single \
+    --device cpu
+
+
+
+
+
+
+xvfb-run -a .venv/bin/python -m scripts.eval \
+  --policy_type lerobot \
+  --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/top_short_pi05_continue_full/checkpoints/009000/pretrained_model \
+  --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/top_short_merged \
+  --garment_type custom \
+  --num_episodes 5 \
+  --enable_cameras \
+  --headless \
+  --save_video \
+  --video_dir outputs/eval_videos/top_short_single_unseen0 \
+  --device cpu
+
+
+
+CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.eval   --policy_type pi05_custom   --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/top_short_pi05_continue_full/checkpoints/009000/pretrained_model   --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/top_short_merged   --garment_type custom   --num_episodes 5   --enable_cameras   --headless   --save_video   --video_dir outputs/eval_videos/top_short_unseen0_pi05_custom   --device cpu
+
+
+
+
+
+
+
+
+
+CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.eval \
+  --policy_type pi05_spatial_forcing \
+  --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/top_short_pi05_spatial_forcing/checkpoints/003000/pretrained_model \
+  --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/top_short_merged \
+  --garment_type custom \
+  --num_episodes 5 \
+  --enable_cameras \
+  --headless \
+  --save_video \
+  --video_dir outputs/eval_videos/top_short_spatial_forcing_custom \
+  --device cpu
+
+
+
+
+
+原始 PI05：3,616,757,520
+新增 align_projector：8,392,704
+新增冻结 VGGT：909,112,320

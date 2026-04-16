@@ -1,7 +1,26 @@
+import sys
+from pathlib import Path
+
 import torch
 import numpy as np
 from typing import Dict, Any, Optional, Set, Union
 from torch import Tensor
+
+
+def _register_local_lerobot_plugins() -> None:
+    repo_root = Path(__file__).resolve().parents[2]
+    repo_root_str = str(repo_root)
+    if repo_root_str not in sys.path:
+        sys.path.insert(0, repo_root_str)
+
+    try:
+        import lerobot_policy_pi05_spatial_forcing  # noqa: F401
+    except ImportError:
+        # Optional for standard checkpoints.
+        return
+
+
+_register_local_lerobot_plugins()
 
 from lerobot.configs.policies import PreTrainedConfig
 from lerobot.policies.factory import make_policy, make_pre_post_processors
@@ -57,6 +76,14 @@ class LeRobotPolicy(BasePolicy):
         # 2. Load Policy Config
         policy_cfg = PreTrainedConfig.from_pretrained(policy_path, cli_overrides={})
         policy_cfg.pretrained_path = policy_path
+        chunk_size = getattr(policy_cfg, "chunk_size", None)
+        n_action_steps = getattr(policy_cfg, "n_action_steps", None)
+        logger.info(
+            "Loaded policy config: "
+            f"type={getattr(policy_cfg, 'type', 'unknown')}, "
+            f"chunk_size={chunk_size}, "
+            f"n_action_steps={n_action_steps}"
+        )
         
         # 3. Filter Metadata (Logic from original create_il_policy)
         # Identify features required by the policy
@@ -69,6 +96,14 @@ class LeRobotPolicy(BasePolicy):
         self.policy = make_policy(policy_cfg, ds_meta=meta)
         self.policy.eval()
         self.policy.to(self.device)
+        runtime_cfg = getattr(self.policy, "config", None)
+        if runtime_cfg is not None:
+            logger.info(
+                "Loaded runtime policy config from model: "
+                f"type={getattr(runtime_cfg, 'type', 'unknown')}, "
+                f"chunk_size={getattr(runtime_cfg, 'chunk_size', None)}, "
+                f"n_action_steps={getattr(runtime_cfg, 'n_action_steps', None)}"
+            )
         
         # 5. Create Processors
         preprocessor_overrides = {

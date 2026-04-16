@@ -1,0 +1,243 @@
+2026-04-11 18:51:08 - scripts.utils.eval_utils - INFO - Evaluation Results Summary
+2026-04-11 18:51:08 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-11 18:51:08 - scripts.utils.eval_utils - INFO - Total Episodes: 60
+2026-04-11 18:51:08 - scripts.utils.eval_utils - INFO - Average Return: 179.83 ± 77.00
+2026-04-11 18:51:08 - scripts.utils.eval_utils - INFO - Success Rate: 43.33%
+2026-04-11 18:51:08 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO - Per-Garment Summary
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO -   Top_Short_Seen_0: Success Rate = 80.00%, Avg Return = 153.41
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO -   Top_Short_Seen_1: Success Rate = 80.00%, Avg Return = 149.85
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO -   Top_Short_Seen_2: Success Rate = 60.00%, Avg Return = 123.84
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO -   Top_Short_Seen_3: Success Rate = 40.00%, Avg Return = 265.46
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO -   Top_Short_Seen_4: Success Rate = 60.00%, Avg Return = 238.95
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO -   Top_Short_Seen_5: Success Rate = 60.00%, Avg Return = 160.23
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO -   Top_Short_Seen_6: Success Rate = 60.00%, Avg Return = 136.90
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO -   Top_Short_Seen_7: Success Rate = 20.00%, Avg Return = 167.01
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO -   Top_Short_Seen_8: Success Rate = 40.00%, Avg Return = 127.83
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO -   Top_Short_Seen_9: Success Rate = 0.00%, Avg Return = 138.38
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO -   Top_Short_Unseen_0: Success Rate = 0.00%, Avg Return = 182.72
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO -   Top_Short_Unseen_1: Success Rate = 20.00%, Avg Return = 313.41
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-11 18:51:08 - scripts.utils.evaluation - INFO - Evaluation completed successfully
+
+
+2026-04-11 19:34:13 - scripts.utils.eval_utils - INFO - Average Return: 142.87 ± 69.36
+2026-04-11 19:34:13 - scripts.utils.eval_utils - INFO - Success Rate: 86.67%
+2026-04-11 19:34:13 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO - Per-Garment Summary
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO -   Pant_Short_Seen_0: Success Rate = 100.00%, Avg Return = 97.96
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO -   Pant_Short_Seen_1: Success Rate = 100.00%, Avg Return = 102.70
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO -   Pant_Short_Seen_2: Success Rate = 60.00%, Avg Return = 183.23
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO -   Pant_Short_Seen_3: Success Rate = 100.00%, Avg Return = 127.02
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO -   Pant_Short_Seen_4: Success Rate = 100.00%, Avg Return = 141.04
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO -   Pant_Short_Seen_5: Success Rate = 100.00%, Avg Return = 114.78
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO -   Pant_Short_Seen_6: Success Rate = 100.00%, Avg Return = 116.09
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO -   Pant_Short_Seen_7: Success Rate = 100.00%, Avg Return = 128.43
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO -   Pant_Short_Seen_8: Success Rate = 100.00%, Avg Return = 141.97
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO -   Pant_Short_Seen_9: Success Rate = 100.00%, Avg Return = 143.65
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO -   Pant_Short_Unseen_0: Success Rate = 20.00%, Avg Return = 229.19
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO -   Pant_Short_Unseen_1: Success Rate = 60.00%, Avg Return = 188.37
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO - Evaluation completed successfully
+2026-04-11 19:34:13 - scripts.utils.evaluation - INFO - ============================================================
+
+
+
+2026-04-11 19:57:49 - scripts.utils.eval_utils - INFO - Evaluation Results Summary                     20:08:18 [4/1884]
+2026-04-11 19:57:49 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-11 19:57:49 - scripts.utils.eval_utils - INFO - Total Episodes: 60
+2026-04-11 19:57:49 - scripts.utils.eval_utils - INFO - Average Return: 145.72 ± 51.35
+2026-04-11 19:57:49 - scripts.utils.eval_utils - INFO - Success Rate: 76.67%
+2026-04-11 19:57:49 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO - Per-Garment Summary
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO -   Top_Long_Seen_0: Success Rate = 80.00%, Avg Return = 149.83
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO -   Top_Long_Seen_1: Success Rate = 60.00%, Avg Return = 183.22
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO -   Top_Long_Seen_2: Success Rate = 80.00%, Avg Return = 158.58
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO -   Top_Long_Seen_3: Success Rate = 40.00%, Avg Return = 132.97
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO -   Top_Long_Seen_4: Success Rate = 100.00%, Avg Return = 142.65
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO -   Top_Long_Seen_5: Success Rate = 100.00%, Avg Return = 120.40
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO -   Top_Long_Seen_6: Success Rate = 80.00%, Avg Return = 156.74
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO -   Top_Long_Seen_7: Success Rate = 80.00%, Avg Return = 97.92
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO -   Top_Long_Seen_8: Success Rate = 60.00%, Avg Return = 181.74
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO -   Top_Long_Seen_9: Success Rate = 80.00%, Avg Return = 143.12
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO -   Top_Long_Unseen_0: Success Rate = 100.00%, Avg Return = 143.25
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO -   Top_Long_Unseen_1: Success Rate = 60.00%, Avg Return = 138.22
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO - Evaluation completed successfully
+2026-04-11 19:57:49 - scripts.utils.evaluation - INFO - ============================================================
+
+
+
+
+2026-04-11 21:22:23 - scripts.utils.eval_utils - INFO - Success Rate: 31.67%
+2026-04-11 21:22:23 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO - Per-Garment Summary
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO -   Pant_Long_Seen_0: Success Rate = 0.00%, Avg Return = 200.23
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO -   Pant_Long_Seen_1: Success Rate = 100.00%, Avg Return = 100.82
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO -   Pant_Long_Seen_2: Success Rate = 20.00%, Avg Return = 193.70
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO -   Pant_Long_Seen_3: Success Rate = 20.00%, Avg Return = 126.71
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO -   Pant_Long_Seen_4: Success Rate = 100.00%, Avg Return = 133.23
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO -   Pant_Long_Seen_5: Success Rate = 40.00%, Avg Return = 179.58
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO -   Pant_Long_Seen_6: Success Rate = 20.00%, Avg Return = 124.00
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO -   Pant_Long_Seen_7: Success Rate = 60.00%, Avg Return = 147.58
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO -   Pant_Long_Seen_8: Success Rate = 0.00%, Avg Return = 147.96
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO -   Pant_Long_Seen_9: Success Rate = 20.00%, Avg Return = 127.95
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO -   Pant_Long_Unseen_0: Success Rate = 0.00%, Avg Return = 93.84
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO -   Pant_Long_Unseen_1: Success Rate = 0.00%, Avg Return = 129.66
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO - Evaluation completed successfully
+2026-04-11 21:22:23 - scripts.utils.evaluation - INFO - ============================================================
+
+
+
+filtered2/2 continue 6000 checkpoints chunk10还是5?
+
+2026-04-14 01:07:20 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-14 01:07:20 - scripts.utils.eval_utils - INFO - Total Episodes: 60
+2026-04-14 01:07:20 - scripts.utils.eval_utils - INFO - Average Return: 174.26 ± 73.75
+2026-04-14 01:07:20 - scripts.utils.eval_utils - INFO - Success Rate: 60.00%
+2026-04-14 01:07:20 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO - Per-Garment Summary
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO -   Top_Short_Seen_0: Success Rate = 80.00%, Avg Return = 130.68
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO -   Top_Short_Seen_1: Success Rate = 100.00%, Avg Return = 126.10
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO -   Top_Short_Seen_2: Success Rate = 100.00%, Avg Return = 131.63
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO -   Top_Short_Seen_3: Success Rate = 60.00%, Avg Return = 247.44
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO -   Top_Short_Seen_4: Success Rate = 80.00%, Avg Return = 233.28
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO -   Top_Short_Seen_5: Success Rate = 80.00%, Avg Return = 127.27
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO -   Top_Short_Seen_6: Success Rate = 80.00%, Avg Return = 149.59
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO -   Top_Short_Seen_7: Success Rate = 40.00%, Avg Return = 173.17
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO -   Top_Short_Seen_8: Success Rate = 0.00%, Avg Return = 197.05
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO -   Top_Short_Seen_9: Success Rate = 40.00%, Avg Return = 136.23
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO -   Top_Short_Unseen_0: Success Rate = 0.00%, Avg Return = 165.18
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO -   Top_Short_Unseen_1: Success Rate = 60.00%, Avg Return = 273.46
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO - Evaluation completed successfully
+2026-04-14 01:07:20 - scripts.utils.evaluation - INFO - ============================================================
+
+
+continue full 15000 action 10
+2026-04-14 21:55:55 - scripts.utils.eval_utils - INFO - Evaluation Results Summary
+2026-04-14 21:55:55 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-14 21:55:55 - scripts.utils.eval_utils - INFO - Total Episodes: 60
+2026-04-14 21:55:55 - scripts.utils.eval_utils - INFO - Average Return: 178.37 ± 74.84
+2026-04-14 21:55:55 - scripts.utils.eval_utils - INFO - Success Rate: 66.67%
+2026-04-14 21:55:55 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO - Per-Garment Summary
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_0: Success Rate = 100.00%, Avg Return = 117.40
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_1: Success Rate = 80.00%, Avg Return = 129.51
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_2: Success Rate = 100.00%, Avg Return = 124.41
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_3: Success Rate = 60.00%, Avg Return = 267.61
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_4: Success Rate = 100.00%, Avg Return = 190.16
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_5: Success Rate = 60.00%, Avg Return = 168.18
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_6: Success Rate = 40.00%, Avg Return = 197.80
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_7: Success Rate = 100.00%, Avg Return = 128.53
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_8: Success Rate = 40.00%, Avg Return = 209.68
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_9: Success Rate = 60.00%, Avg Return = 132.61
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO -   Top_Short_Unseen_0: Success Rate = 0.00%, Avg Return = 175.70
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO -   Top_Short_Unseen_1: Success Rate = 60.00%, Avg Return = 298.80
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO - Evaluation completed successfully
+2026-04-14 21:55:55 - scripts.utils.evaluation - INFO - ============================================================
+
+
+
+SF 9000 action 10
+
+2026-04-15 14:19:02 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-15 14:19:02 - scripts.utils.eval_utils - INFO - Evaluation Results Summary
+2026-04-15 14:19:02 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-15 14:19:02 - scripts.utils.eval_utils - INFO - Total Episodes: 60
+2026-04-15 14:19:02 - scripts.utils.eval_utils - INFO - Average Return: 181.58 ± 78.78
+2026-04-15 14:19:02 - scripts.utils.eval_utils - INFO - Success Rate: 60.00%
+2026-04-15 14:19:02 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO - Per-Garment Summary
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO -   Top_Short_Seen_0: Success Rate = 100.00%, Avg Return = 100.50
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO -   Top_Short_Seen_1: Success Rate = 80.00%, Avg Return = 151.50
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO -   Top_Short_Seen_2: Success Rate = 100.00%, Avg Return = 135.15
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO -   Top_Short_Seen_3: Success Rate = 40.00%, Avg Return = 257.70
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO -   Top_Short_Seen_4: Success Rate = 100.00%, Avg Return = 208.72
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO -   Top_Short_Seen_5: Success Rate = 60.00%, Avg Return = 154.16
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO -   Top_Short_Seen_6: Success Rate = 80.00%, Avg Return = 193.89
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO -   Top_Short_Seen_7: Success Rate = 80.00%, Avg Return = 152.82
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO -   Top_Short_Seen_8: Success Rate = 0.00%, Avg Return = 210.12
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO -   Top_Short_Seen_9: Success Rate = 40.00%, Avg Return = 141.17
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO -   Top_Short_Unseen_0: Success Rate = 0.00%, Avg Return = 161.30
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO -   Top_Short_Unseen_1: Success Rate = 40.00%, Avg Return = 311.95
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO - Evaluation completed successfully
+2026-04-15 14:19:02 - scripts.utils.evaluation - INFO - ============================================================
+
+
+
+
+SF 30000
+2026-04-16 12:43:55 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-16 12:43:55 - scripts.utils.eval_utils - INFO - Evaluation Results Summary
+2026-04-16 12:43:55 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-16 12:43:55 - scripts.utils.eval_utils - INFO - Total Episodes: 60
+2026-04-16 12:43:55 - scripts.utils.eval_utils - INFO - Average Return: 180.61 ± 82.04
+2026-04-16 12:43:55 - scripts.utils.eval_utils - INFO - Success Rate: 60.00%
+2026-04-16 12:43:55 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO - Per-Garment Summary
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_0: Success Rate = 100.00%, Avg Return = 121.11
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_1: Success Rate = 60.00%, Avg Return = 162.44
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_2: Success Rate = 80.00%, Avg Return = 127.31
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_3: Success Rate = 60.00%, Avg Return = 259.22
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_4: Success Rate = 100.00%, Avg Return = 249.94
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_5: Success Rate = 60.00%, Avg Return = 158.75
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_6: Success Rate = 100.00%, Avg Return = 119.89
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_7: Success Rate = 80.00%, Avg Return = 124.30
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_8: Success Rate = 40.00%, Avg Return = 213.17
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO -   Top_Short_Seen_9: Success Rate = 20.00%, Avg Return = 162.72
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO -   Top_Short_Unseen_0: Success Rate = 0.00%, Avg Return = 169.73
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO -   Top_Short_Unseen_1: Success Rate = 20.00%, Avg Return = 298.72
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO - Evaluation completed successfully
+2026-04-16 12:43:55 - scripts.utils.evaluation - INFO - ============================================================
+
+SF 24000
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO - Episode 5/5: Return=212.94, Length=303, Success=True
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO - Overall Summary
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-16 15:04:36 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-16 15:04:36 - scripts.utils.eval_utils - INFO - Evaluation Results Summary
+2026-04-16 15:04:36 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-16 15:04:36 - scripts.utils.eval_utils - INFO - Total Episodes: 60
+2026-04-16 15:04:36 - scripts.utils.eval_utils - INFO - Average Return: 176.29 ± 68.16
+2026-04-16 15:04:36 - scripts.utils.eval_utils - INFO - Success Rate: 61.67%
+2026-04-16 15:04:36 - scripts.utils.eval_utils - INFO - ==================================================
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO - Per-Garment Summary
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO -   Top_Short_Seen_0: Success Rate = 80.00%, Avg Return = 131.02
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO -   Top_Short_Seen_1: Success Rate = 80.00%, Avg Return = 127.26
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO -   Top_Short_Seen_2: Success Rate = 80.00%, Avg Return = 154.05
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO -   Top_Short_Seen_3: Success Rate = 80.00%, Avg Return = 231.00
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO -   Top_Short_Seen_4: Success Rate = 100.00%, Avg Return = 219.47
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO -   Top_Short_Seen_5: Success Rate = 80.00%, Avg Return = 140.08
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO -   Top_Short_Seen_6: Success Rate = 80.00%, Avg Return = 135.90
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO -   Top_Short_Seen_7: Success Rate = 80.00%, Avg Return = 141.58
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO -   Top_Short_Seen_8: Success Rate = 0.00%, Avg Return = 227.02
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO -   Top_Short_Seen_9: Success Rate = 20.00%, Avg Return = 161.11
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO -   Top_Short_Unseen_0: Success Rate = 0.00%, Avg Return = 177.22
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO -   Top_Short_Unseen_1: Success Rate = 60.00%, Avg Return = 269.71
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO - ============================================================
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO - Evaluation completed successfully
+2026-04-16 15:04:36 - scripts.utils.evaluation - INFO - ============================================================

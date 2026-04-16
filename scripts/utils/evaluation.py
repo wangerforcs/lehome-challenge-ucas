@@ -117,6 +117,11 @@ def run_evaluation_loop(
             if args.save_video
             else {}
         )
+        episode_frame_steps = (
+            {k: [] for k in observation_dict.keys() if "images" in k}
+            if args.save_video
+            else {}
+        )
 
         episode_return = 0.0
         episode_length = 0
@@ -193,6 +198,7 @@ def run_evaluation_loop(
                 for key, val in observation_dict.items():
                     if "images" in key:
                         episode_frames[key].append(val.copy())
+                        episode_frame_steps[key].append(st + 1)
 
             if success_flag:
                 extra_steps -= 1
@@ -223,6 +229,7 @@ def run_evaluation_loop(
                 success=success if success_flag else torch.tensor(False),
                 save_dir=args.video_dir,
                 episode_idx=i,
+                step_overlays=episode_frame_steps,
             )
 
         # Log Metrics
@@ -292,10 +299,27 @@ def eval(args: argparse.Namespace, simulation_app: Any) -> None:
     elif args.policy_type == "docker":
         # Docker policy connects to an external container
         policy_kwargs["docker_url"] = args.docker_url
+    elif args.policy_type == "openpi":
+        if not args.policy_path:
+            raise ValueError("--policy_path is required for openpi policy type")
+        policy_kwargs.update(
+            {
+                "policy_path": args.policy_path,
+                "task_description": args.task_description,
+                "openpi_config_name": args.openpi_config_name,
+                "openpi_repo_root": args.openpi_repo_root,
+                "openpi_default_prompt": args.openpi_default_prompt,
+            }
+        )
     else:
-        # For custom policies, pass policy_path as model_path if provided
+        # For custom policies, pass through the same core fields used by lerobot.
         if args.policy_path:
             policy_kwargs["model_path"] = args.policy_path
+            policy_kwargs["policy_path"] = args.policy_path
+        if args.dataset_root:
+            policy_kwargs["dataset_root"] = args.dataset_root
+        if args.task_description:
+            policy_kwargs["task_description"] = args.task_description
 
     # Create policy from registry
     policy = PolicyRegistry.create(args.policy_type, **policy_kwargs)

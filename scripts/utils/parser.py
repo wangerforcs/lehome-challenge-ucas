@@ -177,7 +177,7 @@ def setup_replay_parser(
     parser.add_argument(
         "--step_hz",
         type=int,
-        default=0,
+        default=120,
         help="Environment stepping rate in Hz. Set 0 to disable rate limiting for fastest filtering.",
     )
     parser.add_argument(
@@ -377,6 +377,42 @@ def setup_filter_parser(
         help="Simulation device for replay, e.g. cpu or cuda.",
     )
     parser.add_argument(
+        "--num_trials",
+        type=int,
+        default=1,
+        help="Number of replay trials to run per episode.",
+    )
+    parser.add_argument(
+        "--min_successes",
+        type=int,
+        default=1,
+        help="Minimum number of successful trials required to keep an episode.",
+    )
+    parser.add_argument(
+        "--switch_each_trial",
+        action="store_true",
+        default=False,
+        help="Force switch_garment before every trial, even when the garment name is unchanged.",
+    )
+    parser.add_argument(
+        "--save_replay_videos",
+        action="store_true",
+        default=False,
+        help="Save replayed videos generated during filtering for later inspection.",
+    )
+    parser.add_argument(
+        "--replay_video_dir",
+        type=str,
+        default=None,
+        help="Directory to save replay videos. Defaults to <report_root>/replay_videos when enabled.",
+    )
+    parser.add_argument(
+        "--max_replay_videos",
+        type=int,
+        default=0,
+        help="Maximum number of replay videos to save in total. 0 means no limit.",
+    )
+    parser.add_argument(
         "--disable_depth",
         action="store_true",
         default=False,
@@ -466,6 +502,34 @@ def setup_merge_parser(subparsers: argparse.ArgumentParser) -> argparse.Argument
         action="store_true",
         default=True,
         help="Merge custom meta files",
+    )
+    return parser
+
+
+def setup_subset_merge_parser(subparsers: argparse.ArgumentParser) -> argparse.ArgumentParser:
+    """Setup parser for 'subset_merge' subcommand."""
+    parser = subparsers.add_parser(
+        "subset_merge",
+        help="Compose a new dataset from selected episode subsets of source datasets",
+    )
+    parser.add_argument(
+        "--source_specs",
+        type=str,
+        required=True,
+        help=(
+            "Python list string of source specs. Each spec is a dict with keys: "
+            "'root' (required), plus either 'episode_indices' or "
+            "'start_episode'/'end_episode'. Negative indices are supported."
+        ),
+    )
+    parser.add_argument(
+        "--output_root", type=str, required=True, help="Output dataset directory"
+    )
+    parser.add_argument(
+        "--output_repo_id",
+        type=str,
+        default="subset_merged_dataset",
+        help="Repository ID for the composed dataset",
     )
     return parser
 
@@ -606,6 +670,24 @@ def setup_eval_parser() -> argparse.ArgumentParser:
         type=str,
         default="http://localhost:8080",
         help="URL of the Docker policy server (used when --policy_type docker).",
+    )
+    parser.add_argument(
+        "--openpi_config_name",
+        type=str,
+        default="pi05_lehome_top_short",
+        help="openpi training config name used to create the policy.",
+    )
+    parser.add_argument(
+        "--openpi_repo_root",
+        type=str,
+        default="/home/wzb/vla/openpi",
+        help="Path to the local openpi repository when using --policy_type openpi.",
+    )
+    parser.add_argument(
+        "--openpi_default_prompt",
+        type=str,
+        default=None,
+        help="Optional prompt override passed into the openpi policy.",
     )
 
     return parser

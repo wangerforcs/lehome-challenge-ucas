@@ -1,6 +1,6 @@
 dataset:
-  repo_id: lehome_chellenge_filterd828
-  root: /data/datasets/datasets-hf/dataset_challenge_filtered/four_types_merged
+  repo_id: vote2of2
+  root: /data/datasets/datasets-hf/dataset_challenge_filtered_vote2of2_switch_merged/four_types_merged
 
 policy:
   type: pi05
@@ -12,7 +12,7 @@ policy:
   dtype: bfloat16
   optimizer_lr: 5e-5
   scheduler_decay_lr: 2e-5
-  scheduler_warmup_steps: 5000 #太多了，下次一步到位吧1000 或者2000
+  scheduler_warmup_steps: 2000 #太多了，下次一步到位吧1000 或者2000
   scheduler_decay_steps: 30000
   gradient_checkpointing: true
 

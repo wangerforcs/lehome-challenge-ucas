@@ -17,6 +17,7 @@ from lehome.utils.logger import get_logger
 from lehome.utils.record import RateLimiter, append_episode_initial_pose
 
 from .common import stabilize_garment_after_reset
+from .eval_utils import save_videos_from_observations
 
 logger = get_logger(__name__)
 
@@ -254,6 +255,18 @@ def _matches_garment_filters(
     return True
 
 
+def _switch_to_garment(env, env_cfg, task: str, garment_name: str, garment_version: str):
+    if hasattr(env, "switch_garment"):
+        env.switch_garment(garment_name, garment_version)
+    else:
+        env.close()
+        env_cfg.garment_name = garment_name
+        env = gym.make(task, cfg=env_cfg).unwrapped
+        env.initialize_obs()
+    env_cfg.garment_name = garment_name
+    return env
+
+
 def filter_single_dataset(args, dataset_root: Path) -> dict[str, Any]:
     logger.info(f"Filtering dataset: {dataset_root}")
 
@@ -293,6 +306,12 @@ def filter_single_dataset(args, dataset_root: Path) -> dict[str, Any]:
         raise ValueError(
             f"No episodes selected after applying range/garment filters for {dataset_root}"
         )
+    if args.num_trials < 1:
+        raise ValueError("--num_trials must be >= 1")
+    if args.min_successes < 1:
+        raise ValueError("--min_successes must be >= 1")
+    if args.min_successes > args.num_trials:
+        raise ValueError("--min_successes cannot be greater than --num_trials")
 
     missing_records = [
         int(ep) for ep in episode_table["episode_index"].tolist() if int(ep) not in episode_records
@@ -331,6 +350,16 @@ def filter_single_dataset(args, dataset_root: Path) -> dict[str, Any]:
 
     output_root = Path(args.output_root).resolve() if args.output_root else None
     report_root = Path(args.report_root).resolve()
+    replay_video_root = None
+    if args.save_replay_videos:
+        replay_video_root = (
+            Path(args.replay_video_dir).resolve()
+            if args.replay_video_dir
+            else (report_root / "replay_videos")
+        ) / dataset_root.name
+        replay_video_root.mkdir(parents=True, exist_ok=True)
+    saved_replay_videos = 0
+    max_replay_videos = int(args.max_replay_videos)
     filtered_dataset = _create_output_dataset(
         source_dataset=source_dataset,
         dataset_root=dataset_root,
@@ -346,10 +375,15 @@ def filter_single_dataset(args, dataset_root: Path) -> dict[str, Any]:
     report: dict[str, Any] = {
         "dataset_root": str(dataset_root),
         "total_selected_episodes": int(len(episode_table)),
+        "num_trials": int(args.num_trials),
+        "min_successes": int(args.min_successes),
         "valid_episode_indices": [],
         "invalid_episode_indices": [],
         "invalid_config_episode_indices": [],
         "invalid_config_details": [],
+        "trial_results": [],
+        "saved_replay_videos": 0,
+        "max_replay_videos": max_replay_videos,
         "per_garment": defaultdict(
             lambda: {"valid": [], "invalid": [], "invalid_config": []}
         ),
@@ -369,13 +403,10 @@ def filter_single_dataset(args, dataset_root: Path) -> dict[str, Any]:
                     f"Switching garment: {current_garment_name} -> {garment_name}"
                 )
                 try:
-                    if hasattr(env, "switch_garment"):
-                        env.switch_garment(garment_name, args.garment_version)
-                    else:
-                        env.close()
-                        env_cfg.garment_name = garment_name
-                        env = gym.make(args.task, cfg=env_cfg).unwrapped
-                        env.initialize_obs()
+                    maybe_new_env = _switch_to_garment(
+                        env, env_cfg, args.task, garment_name, args.garment_version
+                    )
+                    env = maybe_new_env
                 except Exception as exc:
                     reason = f"switch_garment failed: {type(exc).__name__}: {exc}"
                     logger.warning(
@@ -393,44 +424,134 @@ def filter_single_dataset(args, dataset_root: Path) -> dict[str, Any]:
                 f"(frames {row.dataset_from_index}:{row.dataset_to_index})"
             )
 
-            try:
-                env.reset()
-                if initial_pose is not None:
-                    env.set_all_pose({"Garment": initial_pose})
-                stabilize_garment_after_reset(env, args)
-            except Exception as exc:
-                reason = f"reset/setup failed: {type(exc).__name__}: {exc}"
-                logger.warning(
-                    f"Skipping episode {episode_index} for {garment_name}: {reason}"
-                )
-                _record_invalid_config(report, garment_name, episode_index, reason)
-                continue
-
-            success = False
+            trial_outcomes: list[bool] = []
             invalid_config_reason = None
-            for frame_idx in range(int(row.dataset_from_index), int(row.dataset_to_index)):
+            required_successes = args.min_successes
+
+            for trial_idx in range(args.num_trials):
+                logger.info(
+                    f"Episode {episode_index} trial {trial_idx + 1}/{args.num_trials}"
+                )
+                trial_frames = None
+                trial_frame_steps = None
                 try:
-                    if rate_limiter:
-                        rate_limiter.sleep(env)
-                    action_np = source_dataset.hf_dataset[frame_idx]["action"]
-                    action = torch.as_tensor(action_np, device=env.device).unsqueeze(0)
-                    env.step(action)
-                    if env._get_success().item():
-                        success = True
+                    if args.switch_each_trial:
+                        logger.info(
+                            f"Episode {episode_index} trial {trial_idx + 1}/{args.num_trials}: "
+                            f"rebuilding garment object via switch_garment({garment_name})"
+                        )
+                        maybe_new_env = _switch_to_garment(
+                            env, env_cfg, args.task, garment_name, args.garment_version
+                        )
+                        env = maybe_new_env
+                    env.reset()
+                    if initial_pose is not None:
+                        env.set_all_pose({"Garment": initial_pose})
+                    stabilize_garment_after_reset(env, args)
+                    if replay_video_root is not None:
+                        initial_obs = env._get_observations()
+                        replay_image_keys = [
+                            key for key in initial_obs.keys() if key == "observation.images.top_rgb"
+                        ]
+                        trial_frames = {key: [] for key in replay_image_keys}
+                        trial_frame_steps = {key: [] for key in replay_image_keys}
+                        for key in replay_image_keys:
+                            trial_frames[key].append(initial_obs[key].copy())
+                            trial_frame_steps[key].append(0)
                 except Exception as exc:
-                    invalid_config_reason = (
-                        f"replay/success_check failed: {type(exc).__name__}: {exc}"
-                    )
+                    invalid_config_reason = f"reset/setup failed: {type(exc).__name__}: {exc}"
                     logger.warning(
                         f"Skipping episode {episode_index} for {garment_name}: {invalid_config_reason}"
                     )
-                    _record_invalid_config(
-                        report, garment_name, episode_index, invalid_config_reason
+                    _record_invalid_config(report, garment_name, episode_index, invalid_config_reason)
+                    break
+
+                trial_success = False
+                for frame_idx in range(int(row.dataset_from_index), int(row.dataset_to_index)):
+                    try:
+                        if rate_limiter:
+                            rate_limiter.sleep(env)
+                        action_np = source_dataset.hf_dataset[frame_idx]["action"]
+                        action = torch.as_tensor(action_np, device=env.device).unsqueeze(0)
+                        env.step(action)
+                        if trial_frames is not None and trial_frame_steps is not None:
+                            observations = env._get_observations()
+                            for key in trial_frames.keys():
+                                trial_frames[key].append(observations[key].copy())
+                                trial_frame_steps[key].append(
+                                    frame_idx - int(row.dataset_from_index) + 1
+                                )
+                        if env._get_success().item():
+                            trial_success = True
+                    except Exception as exc:
+                        invalid_config_reason = (
+                            f"replay/success_check failed: {type(exc).__name__}: {exc}"
+                        )
+                        logger.warning(
+                            f"Skipping episode {episode_index} for {garment_name}: {invalid_config_reason}"
+                        )
+                        _record_invalid_config(
+                            report, garment_name, episode_index, invalid_config_reason
+                        )
+                        break
+
+                if invalid_config_reason is not None:
+                    break
+
+                trial_outcomes.append(trial_success)
+                should_save_replay_video = (
+                    replay_video_root is not None
+                    and trial_frames is not None
+                    and (max_replay_videos == 0 or saved_replay_videos < max_replay_videos)
+                )
+                if should_save_replay_video:
+                    save_videos_from_observations(
+                        trial_frames,
+                        save_dir=str(replay_video_root),
+                        episode_idx=episode_index,
+                        success=torch.tensor(trial_success),
+                        step_overlays=trial_frame_steps,
+                        filename_prefix=f"src_ep{episode_index:04d}_trial{trial_idx + 1}",
+                    )
+                    saved_replay_videos += 1
+                    report["saved_replay_videos"] = saved_replay_videos
+                successes_so_far = sum(trial_outcomes)
+                remaining_trials = args.num_trials - (trial_idx + 1)
+                max_possible_successes = successes_so_far + remaining_trials
+                if successes_so_far >= required_successes:
+                    logger.info(
+                        f"Episode {episode_index} reached success threshold "
+                        f"{successes_so_far}/{trial_idx + 1} >= {required_successes}"
+                    )
+                    break
+                if max_possible_successes < required_successes:
+                    logger.info(
+                        f"Episode {episode_index} cannot reach success threshold anymore: "
+                        f"{successes_so_far}+{remaining_trials} < {required_successes}"
                     )
                     break
 
             if invalid_config_reason is not None:
                 continue
+
+            success_count = sum(trial_outcomes)
+            success = success_count >= required_successes
+            report["trial_results"].append(
+                {
+                    "episode_index": episode_index,
+                    "garment_name": garment_name,
+                    "successes": success_count,
+                    "trials_run": len(trial_outcomes),
+                    "trial_outcomes": trial_outcomes,
+                }
+            )
+
+            logger.info(
+                f"Episode {episode_index} final replay result for {garment_name}: "
+                f"{'PASS' if success else 'FAIL'} "
+                f"({success_count}/{len(trial_outcomes)} successful trials, "
+                f"required {required_successes}/{args.num_trials})"
+            )
 
             if success:
                 report["valid_episode_indices"].append(episode_index)

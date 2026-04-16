@@ -19,6 +19,7 @@ from .utils import (
     setup_read_parser,
     setup_augment_parser,
     setup_merge_parser,
+    setup_subset_merge_parser,
 )
 
 
@@ -38,6 +39,7 @@ def main():
     setup_read_parser(subparsers)
     setup_augment_parser(subparsers)
     setup_merge_parser(subparsers)
+    setup_subset_merge_parser(subparsers)
 
     args = parser.parse_args()
 
@@ -72,6 +74,15 @@ def main():
             Path(args.output_root),
             output_repo_id=args.output_repo_id,
             merge_custom_meta=args.merge_custom_meta,
+        )
+    elif args.command == "subset_merge":
+        import ast
+
+        source_specs = ast.literal_eval(args.source_specs)
+        dataset_processing.subset_merge_datasets(
+            source_specs=source_specs,
+            output_root=Path(args.output_root),
+            output_repo_id=args.output_repo_id,
         )
 
 
