@@ -119,3 +119,5 @@ continuefull接top short chunk50但是全量数据
 
 top long最好的是
 /home/wzb/challenges/lehome-challenge/outputs/train/pi05_filterd/checkpoints/010000/pretrained_model
+
+pant short用/home/wzb/challenges/lehome-challenge/outputs/train/pi05_ultra2/checkpoints/024000/pretrained_model

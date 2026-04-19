@@ -33,7 +33,7 @@ class CustomPolicy(BasePolicy):
                 'dataset_root': os.path.join(self.base_dir, "Datasets/example/pant_long_merged")
             },
             'pant_short': {
-                'policy_path': os.path.join(self.base_dir, "outputs/train/top_long_best"),
+                'policy_path': os.path.join(self.base_dir, "outputs/train/pant_short_best"),
                 'dataset_root': os.path.join(self.base_dir, "Datasets/example/pant_short_merged")
             },
             'top_long': {

@@ -62,7 +62,7 @@ xvfb-run -a python -m scripts.eval --policy_type custom --garment_type top_long 
 
 
 
-CUDA_VISIBLE_DEVICES=0,1 accelerate launch --multi_gpu --num_processes=2 /home/wzb/challenges/lehome-challenge/.venv/bin/lerobot-train --config_path=/home/wzb/challenges/lehome-challenge/outputs/train/pi05_merged/checkpoints/last/pretrained_model/train_config.json --resume=true  --steps=50000
+CUDA_VISIBLE_DEVICES=0,1 accelerate launch --multi_gpu --num_processes=2 /home/wzb/challenges/lehome-challenge/.venv/bin/lerobot-train --config_path=/home/wzb/challenges/lehome-challenge/outputs/train/pi05_ultra2/checkpoints/003000/pretrained_model/train_config.json --resume=true
 
 
 
@@ -476,6 +476,51 @@ CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.eval \
 
 
 
+CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.eval \
+  --policy_type pi05_spatial_forcing \
+  --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/pi05_ultra2/checkpoints/006000/pretrained_model \
+  --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/top_long_pant_short_merged \
+  --garment_type top_long \
+  --num_episodes 5 \
+  --enable_cameras \
+  --headless \
+  --save_video \
+  --video_dir outputs/eval_videos/ \
+  --device cpu
+
+
+CUDA_VISIBLE_DEVICES=0 xvfb-run -a .venv/bin/python -m scripts.eval \
+  --policy_type pi05_spatial_forcing \
+  --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/pi05_ultra2/checkpoints/006000/pretrained_model \
+  --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/top_long_pant_short_merged \
+  --garment_type pant_short \
+  --num_episodes 5 \
+  --enable_cameras \
+  --headless \
+  --save_video \
+  --video_dir outputs/eval_videos/ultra_pant_short \
+  --device cpu
+
+
+
+
+
 原始 PI05：3,616,757,520
 新增 align_projector：8,392,704
 新增冻结 VGGT：909,112,320
+
+
+
+CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.eval \
+  --policy_type lerobot \
+  --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/pi05_ultra2/checkpoints/006000/pretrained_model \
+  --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/top_long_pant_short_merged \
+  --garment_type custom \
+  --save_datasets \
+  --eval_dataset_path Datasets/eval \
+  --num_episodes 5 \
+  --save_video \
+  --video_dir outputs/eval_videos \
+  --enable_cameras \
+  --headless \
+  --device cpu

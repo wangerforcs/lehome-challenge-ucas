@@ -21,7 +21,8 @@ Our solution implements a **Dynamic Mixture-of-Experts (MoE)** framework to addr
 ├── outputs/classifier/garment_classifier_resnet18.pth # Fine-tuned ResNet18 Weights
 ├── outputs/train/                                     # Specialized Expert Weights
 │   ├── pant_long_best
-│   ├── top_long_best                                  # for top long and pant short
+│   ├── pant_short_best
+│   ├── top_long_best                                  
 │   └── top_short_best
 └── Datasets/example/                                  # Metadata for Normalization
     ├── pant_long_merged/meta/stats.json

@@ -44,3 +44,4 @@ log_freq: 500
 wandb:
   enable: true
   project: pi05_folder
+  run_id: ct2fdife
