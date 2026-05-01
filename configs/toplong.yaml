@@ -1,18 +1,18 @@
 dataset:
-  repo_id: topshort
-  root: /data/datasets/datasets-hf/dataset_challenge_filtered_vote2of2_switch/top_short/top_short_merged
+  repo_id: top_long_pant_short
+  root: /data/datasets/datasets-hf/dataset_challenge_merged/top_long_merged_extra
 
 policy:
   type: pi05
   device: cuda
   push_to_hub: false
-  pretrained_path: /data/datasets/models-hf/pi05_base
-  chunk_size: 10
+  pretrained_path: /data/wzb/pi05_ultra2/checkpoints/006000/pretrained_model
+  chunk_size: 20
   n_action_steps: 10
   dtype: bfloat16
-  optimizer_lr: 5e-5
+  optimizer_lr: 4e-5
   scheduler_decay_lr: 2e-5
-  scheduler_warmup_steps: 1000 
+  scheduler_warmup_steps: 3000
   scheduler_decay_steps: 30000
   gradient_checkpointing: true
 
@@ -35,12 +35,12 @@ policy:
       type: ACTION
       shape: [12]
 
-output_dir: outputs/train/top_short_pi05
-batch_size: 128
-steps: 30000
+output_dir: outputs/train/pi05_extra_toplong
+batch_size: 64
+steps: 15000
 save_freq: 3000
 log_freq: 500
 
 wandb:
   enable: true
-  project: pi05_top_short
+  project: pi05_folder_top_long

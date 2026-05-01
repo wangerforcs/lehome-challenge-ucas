@@ -524,3 +524,128 @@ CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.eval \
   --enable_cameras \
   --headless \
   --device cpu
+
+
+
+
+
+
+
+
+
+.venv/bin/python -m scripts.dataset merge   --source_roots "['Datasets/eval/001', 'Datasets/eval/0002', 'Datasets/eval/0004', 'Datasets/eval/0005']"   --output_root Datasets/eval_merged   --output_repo_id eval_merged_top_long   --merge_custom_meta
+
+1,5,6,14,21,24,26
+.venv/bin/python -m scripts.dataset merge   --source_roots "['Datasets/pant_short1/001/001', 'Datasets/pant_short1/001/005', 'Datasets/pant_short1/001/006', 'Datasets/pant_short1/001/014', 'Datasets/pant_short1/001/021', 'Datasets/pant_short1/001/024', 'Datasets/pant_short1/001/026']"   --output_root Datasets/pant_short_merged2   --output_repo_id eval_merged_pant_short   --merge_custom_meta
+
+合并Datasets/pant_short/002下的002,003,004,005,006,007
+.venv/bin/python -m scripts.dataset merge   --source_roots "['Datasets/pant_short/002/002', 'Datasets/pant_short/002/003', 'Datasets/pant_short/002/004', 'Datasets/pant_short/002/005', 'Datasets/pant_short/002/006', 'Datasets/pant_short/002/007']"   --output_root Datasets/pant_short_merged1   --output_repo_id eval_merged_pant_short   --merge_custom_meta
+
+
+
+.venv/bin/python -m scripts.dataset merge   --source_roots "[ 'Datasets/top_long1_merged', 'Datasets/top_long_merged']"   --output_root Datasets/top_long_merged_full   --output_repo_id eval_merged_top_long   --merge_custom_meta
+
+
+
+.venv/bin/python -m scripts.dataset merge \
+  --source_roots "['Datasets/top_long/001/002', 'Datasets/top_long/001/003', 'Datasets/top_long/001/005', 'Datasets/top_long/001/006', 'Datasets/top_long/001/007', 'Datasets/top_long/001/010', 'Datasets/top_long/001/013', 'Datasets/top_long/001/014', 'Datasets/top_long/001/015', 'Datasets/top_long/001/017', 'Datasets/top_long/001/019', 'Datasets/top_long/001/020', 'Datasets/top_long/001/021', 'Datasets/top_long/001/022', 'Datasets/top_long/001/025', 'Datasets/top_long/001/028', 'Datasets/top_long/001/029']" \
+  --output_root Datasets/top_long_merged \
+  --output_repo_id top_long_merged \
+  --merge_custom_meta
+
+
+.venv/bin/python -m scripts.dataset merge \
+  --source_roots "['Datasets/top_long1/001/001', 'Datasets/top_long1/001/003', 'Datasets/top_long1/001/004', 'Datasets/top_long1/001/005', 'Datasets/top_long1/001/006', 'Datasets/top_long1/001/009', 'Datasets/top_long1/001/010', 'Datasets/top_long1/002/001', 'Datasets/top_long1/002/002', 'Datasets/top_long1/002/004', 'Datasets/top_long1/002/005', 'Datasets/top_long1/002/006', 'Datasets/top_long1/002/007', 'Datasets/top_long1/002/009', 'Datasets/top_long1/002/010', 'Datasets/top_long1/003/001', 'Datasets/top_long1/003/002', 'Datasets/top_long1/003/003', 'Datasets/top_long1/003/007', 'Datasets/top_long1/003/008', 'Datasets/top_long1/003/010', 'Datasets/top_long1/004/002', 'Datasets/top_long1/004/004', 'Datasets/top_long1/004/005', 'Datasets/top_long1/004/006', 'Datasets/top_long1/004/007', 'Datasets/top_long1/004/008', 'Datasets/top_long1/004/009', 'Datasets/top_long1/004/010', 'Datasets/top_long1/005/006', 'Datasets/top_long1/005/007', 'Datasets/top_long1/005/008', 'Datasets/top_long1/005/009', 'Datasets/top_long1/005/010']" \
+  --output_root Datasets/top_long1_merged \
+  --output_repo_id top_long1_merged \
+  --merge_custom_meta
+
+
+
+
+8个
+.venv/bin/python -m scripts.dataset subset_merge \
+  --source_specs "[{'root': 'Datasets/eval/002', 'episode_indices': [0,2,3,5,6,8,14,17]}]" \
+  --output_root Datasets/eval/0002 \
+  --output_repo_id eval_sampled
+
+
+12个
+.venv/bin/python -m scripts.dataset subset_merge \
+  --source_specs "[{'root': 'Datasets/eval/004', 'episode_indices': [0,1,2,3,4,5,6,7,8,9,10,11]}]" \
+  --output_root Datasets/eval/0004 \
+  --output_repo_id eval_sampled
+
+5个
+.venv/bin/python -m scripts.dataset subset_merge \
+  --source_specs "[{'root': 'Datasets/eval/005', 'episode_indices': [10,14,17,19,20]}]" \
+  --output_root Datasets/eval/0005 \
+  --output_repo_id eval_sampled
+
+
+
+CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.eval   --policy_type lerobot --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/pi05_extra_pantshort/checkpoints/006000/pretrained_model   --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/pant_short_merged_extra   --garment_type pant_short   --num_episodes 5  --enable_cameras   --headless   --save_video   --video_dir outputs/eval_videos/ultra_pant_short1   --device cpu
+
+
+
+CUDA_VISIBLE_DEVICES=0,1 accelerate launch --multi_gpu --num_processes=2 /home/wzb/challenges/lehome-challenge/.venv/bin/lerobot-train --config_path=/home/wzb/challenges/lehome-challenge/outputs/train/pi05_extra_pantshort/checkpoints/009000/pretrained_model/train_config.json --resume=true
+
+
+.venv/bin/python -m scripts.dataset merge   --source_roots "['Datasets/top_long_merged_full', '/data/datasets/datasets-hf/dataset_challenge_merged/top_long_merged']"   --output_root /data/datasets/datasets-hf/dataset_challenge_merged/top_long_merged_extra   --output_repo_id merged_pant_short   --merge_custom_meta
+
+
+.venv/bin/python -m scripts.dataset merge   --source_roots "['Datasets/all_top_long/top_long_merged_full', '/data/datasets/datasets-hf/dataset_challenge_merged/top_long_merged']"   --output_root /data/datasets/datasets-hf/dataset_challenge_merged/top_long_merged_extra   --output_repo_id merged_top_long   --merge_custom_meta
+
+
+
+
+
+CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.eval   --policy_type lerobot   --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/pi05_extra_pantshort/checkpoints/012000/pretrained_model   --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/pant_short_merged_extra   --garment_type pant_short   --num_episodes 10   --enable_cameras   --headless   --save_video   --video_dir outputs/eval_videos/ultra_pant_short1   --device cpu
+
+
+
+
+
+
+
+
+CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.eval   --policy_type lerobot   --policy_path /data/wzb/pi05_ultra2/checkpoints/006000/pretrained_model   --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/top_long_pant_short_merged   --garment_type top_long   --num_episodes 10   --enable_cameras   --headless   --save_video   --video_dir outputs/eval_videos/top_long_ultra   --device cpu
+
+
+/home/wzb/challenges/lehome-challenge/outputs/train/pi05_filterd/checkpoints/010000/pretrained_model
+
+
+
+CUDA_VISIBLE_DEVICES=0 xvfb-run -a .venv/bin/python -m scripts.eval   --policy_type lerobot   --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/pi05_filterd/checkpoints/010000/pretrained_model   --dataset_root /data/datasets/datasets-hf/dataset_challenge_filtered/four_types_merged   --garment_type top_long   --num_episodes 10   --enable_cameras   --headless   --save_video   --video_dir outputs/eval_videos/top_long_ultra1   --device cpu
+
+
+CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.eval   --policy_type lerobot   --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/pi05_extra_toplong/checkpoints/015000/pretrained_model   --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/top_long_merged_extra   --garment_type top_long   --num_episodes 10   --enable_cameras   --headless   --save_video   --video_dir outputs/eval_videos/top_long_ultra3   --device cpu
+
+
+
+CUDA_VISIBLE_DEVICES=0 xvfb-run -a .venv/bin/python -m scripts.eval --policy_type custom --garment_type top_short --enable_cameras --device cpu --headless --num_episodes 10
+
+
+
+
+
+
+
+CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.eval   --policy_type lerobot   --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/pi05_extra_pantshort_new/checkpoints/009000/pretrained_model   --dataset_root /data/datasets/datasets-hf/dataset_challenge_merged/pant_short_merged_extra   --garment_type pant_short   --num_episodes 10   --enable_cameras   --headless   --save_video   --video_dir outputs/eval_videos/pant_short_final   --device cpu
+
+
+
+CUDA_VISIBLE_DEVICES=1 xvfb-run -a .venv/bin/python -m scripts.eval   --policy_type lerobot   --policy_path /home/wzb/challenges/lehome-challenge/outputs/train/top_short_pi05_final1/checkpoints/015000/pretrained_model   --dataset_root /data/datasets/datasets-hf/top_short_large/top_short_merged   --garment_type custom   --num_episodes 10   --enable_cameras   --headless   --save_video   --video_dir outputs/eval_videos/top_short_final   --device cpu
+
+
+
+
+
+
+CUDA_VISIBLE_DEVICES=2 XLA_PYTHON_CLIENT_MEM_FRACTION=0.6 python policy.py
+
+
+CUDA_VISIBLE_DEVICES=3 xvfb-run -a python -m scripts.eval --policy_type docker --docker_url http://localhost:8081 --garment_type custom --enable_cameras --device cpu --headless --num_episodes 10 --save_video
+
+
+docker cp pi05jax_final 51be438548b7:/opt/lehome-challenge/checkpoints

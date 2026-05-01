@@ -701,7 +701,6 @@ def merge_garment_info(source_roots: List[Path], output_root: Path) -> int:
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     merged_data = {}
-    episode_offset = 0
     total_merged = 0
 
     for source_root in source_roots:
@@ -709,10 +708,6 @@ def merge_garment_info(source_roots: List[Path], output_root: Path) -> int:
 
         if not source_path.exists():
             logger.warning(f"garment_info.json not found in {source_root}, skipping...")
-            info_path = source_root / "meta" / "info.json"
-            if info_path.exists():
-                with open(info_path, "r") as f:
-                    episode_offset += json.load(f).get("total_episodes", 0)
             continue
 
         logger.info(f"Merging garment_info.json from {source_root}")
@@ -726,11 +721,13 @@ def merge_garment_info(source_roots: List[Path], output_root: Path) -> int:
                 if garment_name not in merged_data:
                     merged_data[garment_name] = {}
 
-                for episode_key, episode_data in episodes.items():
+                # Each garment's episodes start from 0, appending to existing
+                next_idx = len(merged_data[garment_name])
+                for episode_key, episode_data in sorted(episodes.items(), key=lambda x: int(x[0])):
                     try:
-                        old_idx = int(episode_key)
-                        new_key = str(old_idx + episode_offset)
+                        new_key = str(next_idx)
                         merged_data[garment_name][new_key] = episode_data.copy()
+                        next_idx += 1
                         count += 1
                     except (ValueError, TypeError) as e:
                         logger.warning(
@@ -744,14 +741,6 @@ def merge_garment_info(source_roots: List[Path], output_root: Path) -> int:
 
         total_merged += count
         logger.info(f"  Merged {count} episodes from {source_root}")
-
-        # Update episode offset for next dataset
-        info_path = source_root / "meta" / "info.json"
-        if info_path.exists():
-            with open(info_path, "r") as f:
-                episode_offset += json.load(f).get("total_episodes", count)
-        else:
-            episode_offset += count
 
     # Sort by garment_name and episode indices
     sorted_data = {}

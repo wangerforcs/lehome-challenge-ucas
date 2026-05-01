@@ -1,4 +1,5 @@
 import os
+import shutil
 import argparse
 import gymnasium as gym
 import torch
@@ -45,8 +46,7 @@ def run_evaluation_loop(
 
     # --- Dataset Recording Setup (Optional) ---
     eval_dataset = None
-    json_path = None
-    episode_index = 0
+    garment_dir = None
     if args.save_datasets:
         features = None
         if args.dataset_root and Path(args.dataset_root).exists():
@@ -86,22 +86,27 @@ def run_evaluation_loop(
                     "names": ["height", "width", "channels"],
                 }
         root_path = Path(args.eval_dataset_path)
-        eval_dataset = LeRobotDataset.create(
-            repo_id="lehome_eval",
-            fps=fps,
-            root=get_next_experiment_path_with_gap(root_path),
-            use_videos=True,
-            image_writer_threads=8,
-            image_writer_processes=0,
-            features=features,
-        )
-        json_path = eval_dataset.root / "meta" / "garment_info.json"
 
     all_episode_metrics = []
     logger.info(f"Starting evaluation: {args.num_episodes} episodes")
     rate_limiter = RateLimiter(args.step_hz)
 
     for i in range(args.num_episodes):
+        # Create a new独立 dataset for each episode (用原始episode编号命名)
+        if args.save_datasets:
+            if garment_dir is None:
+                garment_dir = get_next_experiment_path_with_gap(root_path)
+            ep_root = garment_dir / f"{i + 1:03d}"
+            eval_dataset = LeRobotDataset.create(
+                repo_id="lehome_eval",
+                fps=fps,
+                root=ep_root,
+                use_videos=True,
+                image_writer_threads=8,
+                image_writer_processes=0,
+                features=features,
+            )
+
         # 1. Reset Environment & Policy
         env.reset()
         policy.reset()
@@ -212,15 +217,19 @@ def run_evaluation_loop(
         if args.save_datasets:
             if success_flag:
                 eval_dataset.save_episode()
+                eval_dataset.finalize()
+                json_path = ep_root / "meta" / "garment_info.json"
                 append_episode_initial_pose(
                     json_path,
-                    episode_index,
+                    0,
                     object_initial_pose,
                     garment_name=garment_name,
                 )
-                episode_index += 1
             else:
-                eval_dataset.clear_episode_buffer()
+                eval_dataset.finalize()
+                # Remove the empty failed dataset
+                shutil.rmtree(eval_dataset.root, ignore_errors=True)
+            eval_dataset = None
 
         # Save Videos (Using generic util)
         if args.save_video:
