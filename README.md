@@ -1,3 +1,7 @@
+**Froked from https://github.com/lehome-official/lehome-challenge**
+
+**Competition Record https://github.com/wangerforcs/EILearn/blob/master/competition/lehome.md**
+
 <p align="center">
   <h1 align="center">
     LeHome Challenge 2026
